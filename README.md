@@ -5,6 +5,6 @@ train_n.py --> specify  the input folder as a command line argument containing t
 
 test.py --> specify  the output folder as a command line argument containing images for testing
 
-3 trained files with extensions .pkl are available
+trained model is saved with extension ' .pkl'
 
 Dataset is for training and testing can be downloaded from : ftp://ftp.inrialpes.fr/pub/lear/douze/data/INRIAPerson.tar
