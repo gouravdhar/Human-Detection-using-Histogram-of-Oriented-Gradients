@@ -7,4 +7,4 @@ test.py --> specify  the output folder as a command line argument containing ima
 
 trained model is saved with extension ' .pkl'
 
-Dataset is for training and testing can be downloaded from : ftp://ftp.inrialpes.fr/pub/lear/douze/data/INRIAPerson.tar
+Dataset for training and testing can be downloaded from : ftp://ftp.inrialpes.fr/pub/lear/douze/data/INRIAPerson.tar
