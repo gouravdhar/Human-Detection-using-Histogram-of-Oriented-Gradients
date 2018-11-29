@@ -51,114 +51,47 @@ def sliding_window(image, stepSize, windowSize):
 			# yield the current window
 			yield (x, y, image[y:y + windowSize[1], x:x + windowSize[0]])
 
-j=0
-i=0
-k=0
+
+
 for imagePath in paths.list_images(args["train"]):
 
 	ishuman = imagePath.split(os.sep)[-2]
 
 	image = cv2.imread(imagePath)
-	#gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	#edged = imutils.auto_canny(gray)
 
-	# find contours in the edge map, keeping only the largest one which is presumed to be the digit
-	#(_,cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,
-	#	cv2.CHAIN_APPROX_SIMPLE)
-	#c = max(cnts, key=cv2.contourArea)
-	k=k+1
-	#print k
-	# extract the digit and resize it
-	#(x, y, w, h) = cv2.boundingRect(c)
-	#num = gray[y:y + h, x:x + w]
-	#img = cv2.resize(img, (64, 128))
 	for resized in pyramid(image, scale=1.5):
 		# loop over the sliding window for each layer of the pyramid
 		for (x, y, window) in sliding_window(resized, stepSize=64, windowSize=(winW, winH)):
 			# if the window does not meet our desired window size, ignore it
 			if window.shape[0] != winH or window.shape[1] != winW:
 				continue
-			#pic = cv2.resize(window, (64, 128))
-			'''
-			cv2.imshow("Image", window)
-			cv2.waitKey(1)
-			time.sleep(0.025)
-			'''
-			#ishuman = imagePath.split(os.sep)[-2]
-			#print ishuman
-			if ishuman == 'pos' :
-				i=i+1
-			if ishuman == 'neg' :
-				j=j+1
-				print j
+
 			gray = cv2.cvtColor(window, cv2.COLOR_BGR2GRAY)
-			'''
-			edged = imutils.auto_canny(gray)
-			(_,cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,
-				cv2.CHAIN_APPROX_SIMPLE)
-			c = max(cnts, key=cv2.contourArea)
-			(x, y, w, h) = cv2.boundingRect(c)
-			num = gray[y:y + h, x:x + w]
-			'''
+
 			img = cv2.resize(gray, (64, 128))
-			'''
-			cv2.imshow("Image", img)
-			cv2.waitKey(1)
-			time.sleep(0.025)
-			'''
+
 			(H,hogimg) = feature.hog(img, orientations=9, pixels_per_cell=(8, 8),
 				    		cells_per_block=(3, 3), transform_sqrt=True, visualise=True)
 			
 			data.append(H)
 			labels.append(ishuman)
-			#j=j+1
-			#print j
 
-'''
-# loop over the image paths in the training set
-for imagePath in paths.list_images(args["train"]):
-	# extract the digit
-	digit = imagePath.split(os.sep)[-2]
 
-	# load the image, convert it to grayscale, and detect edges
-	image = cv2.imread(imagePath)
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	edged = imutils.auto_canny(gray)
+ 
+# uncomment for using svm
+# svc = svm.SVC(kernel='linear', C=1,gamma=1).fit(data, labels)
+# joblib.dump(svc, 'trained_detector.pkl') 
+# #save trained files
 
-	# find contours in the edge map, keeping only the largest one which is presumed to be the digit
-	(_,cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,
-		cv2.CHAIN_APPROX_SIMPLE)
-	c = max(cnts, key=cv2.contourArea)
+# uncomment for using sgd classifier
+# cl=SGDClassifier(loss="hinge",penalty="l2")
+# for i in range((len(data)/1500)+1):
+# 	data_,label_=batch(i*1500)
+# 	print 'k'
+# 	cl.partial_fit(data_,label_,classes=np.unique(labels))
 
-	# extract the digit and resize it
-	(x, y, w, h) = cv2.boundingRect(c)
-	num = gray[y:y + h, x:x + w]
-	num = cv2.resize(num, (200, 100))
-    
-	# extract Histogram of Oriented Gradients from num
-	H = feature.hog(num, orientations=9, pixels_per_cell=(10, 10),
-		cells_per_block=(2, 2), transform_sqrt=True)
-	
-	# update the data and labels
-	data.append(H)
-	labels.append(digit)
+# joblib.dump(cl, 'trained_detector.pkl') 
 
-svc = svm.SVC(kernel='linear', C=1,gamma=1).fit(data, labels)
-#save trained files
-'''
-
-print i
-print j
-print k
-'''
-cl=SGDClassifier(loss="hinge",penalty="l2")
-for i in range((len(data)/1500)+1):
-	data_,label_=batch(i*1500)
-	print 'k'
-	cl.partial_fit(data_,label_,classes=np.unique(labels))
-
-joblib.dump(cl, 'trained_detector.pkl') 
-'''
 model = KNeighborsClassifier(n_neighbors=1)
 model.fit(data, labels)
 joblib.dump(model, 'trained_detector_knn.pkl') 
