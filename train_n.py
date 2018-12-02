@@ -45,7 +45,7 @@ for imagePath in paths.list_images(args["train"]):
 	image = cv2.imread(imagePath)
 	image = imutils.resize(image, width=min(500, image.shape[1]))
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	num = cv2.resize(gray, (64, 64))
+	img = cv2.resize(gray, (64, 128))
 	print 'training '
 	'''
 	edged = imutils.auto_canny(gray)
@@ -55,11 +55,11 @@ for imagePath in paths.list_images(args["train"]):
 	c = max(cnts, key=cv2.contourArea)
 	# extract the digit and resize it
 	(x, y, w, h) = cv2.boundingRect(c)
-	num = gray[y:y + h, x:x + w]
-	num = cv2.resize(num, (200, 100))
+	img = gray[y:y + h, x:x + w]
+	img = cv2.resize(img, (200, 100))
     '''
-	# extract Histogram of Oriented Gradients from num
-	H = feature.hog(num, orientations=9, pixels_per_cell=(10, 10),
+	# extract Histogram of Oriented Gradients from img
+	H = feature.hog(img, orientations=9, pixels_per_cell=(10, 10),
 		cells_per_block=(2, 2))
 	
 	# update the data and labels
