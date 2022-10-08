@@ -1,5 +1,5 @@
 # Human-Detection-using-Histogram-of-Oriented-Gradients
-Trained a model for Human Detection using Histogram of Oriented Gradients Algorithm
+Trained a model for Human Detection using Histogram of Oriented Gradients Algorithmwdwd
 
 train_n.py --> specify  the input folder as a command line argument containing two folders named 'pos' and 'neg' containg positive and negative training images respectively 
 
